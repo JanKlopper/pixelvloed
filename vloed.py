@@ -29,6 +29,7 @@ PROTOCOL_VERSION = 1
 MAX_PROTOCOL_VERSION = 1
 PROTOCOL_PREAMBLE = "pixelvloed"
 MAX_PIXELS = 140
+MAX_MESSAGE_SIZE = MAX_PIXELS + 2
 DEFAULT_WIDTH = 786
 DEFAULT_HEIGHT = 1366
 
@@ -284,7 +285,7 @@ class PixelVloedClient(object):
 
 def NewMessage():
   """Creates a new message with the correct max size, rgb mode and version"""
-  message = MaxSizeList(MAX_PIXELS+2)
+  message = MaxSizeList(MAX_MESSAGE_SIZE)
   message.append(SetRGBAMode(False))
   message.append(SetVersionBit())
   return message
