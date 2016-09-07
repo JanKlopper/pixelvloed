@@ -9,7 +9,7 @@ __version__ = 0.3
 __author__ = "Jan Klopper <jan@underdark.nl>"
 
 import random
-from vloed import PixelVloedClient, NewMessage, RGBPixel, MAX_PIXELS
+from vloed import PixelVloedClient, NewMessage, RGBPixel, MAX_MESSAGE_SIZE, MAX_PIXELS
 
 def RandomFill(message, width, height):
   """Generates a random number of pixels with a random color"""
@@ -19,11 +19,10 @@ def RandomFill(message, width, height):
                      random.randint(0, 255),
                      random.randint(0, 255),
                      random.randint(0, 255))
-    try:
-      message.append(pixel)
-    except IndexError:
+    if (len(message) >= MAX_MESSAGE_SIZE):
       yield ''.join(message)
-      message[2:] = [pixel]
+      message[2:] = []
+    message.append(pixel)
   yield ''.join(message)
 
 def RunClient(options):
