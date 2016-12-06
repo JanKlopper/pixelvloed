@@ -225,7 +225,7 @@ class PixelVloedClient(object):
     """
     self.sock.sendto(message, (self.ipaddress, self.port))
     if sleep:
-      self.Sleep(duration=0.01)
+      self.Sleep(duration=sleep)
 
   @staticmethod
   def DiscoverServers(returnfirst=False, timeout=5):
