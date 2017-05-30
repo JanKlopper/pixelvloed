@@ -9,9 +9,9 @@ __version__ = 0.3
 __author__ = "Jan Klopper <jan@underdark.nl>"
 
 import random
-from vloed import PixelVloedClient, NewMessage, RGBPixel, MAX_PIXELS
+from vloed import PixelVloedClient, InitMessage, RGBPixel, MAX_PIXELS
 
-def RandomFill(message, width, height):
+def RandomFill(pixels, width, height):
   """Generates a random number of pixels with a random color"""
   for pixel in xrange(0, random.randint(10, MAX_PIXELS)):
     pixel = RGBPixel(random.randint(0, width),
@@ -19,12 +19,7 @@ def RandomFill(message, width, height):
                      random.randint(0, 255),
                      random.randint(0, 255),
                      random.randint(0, 255))
-    try:
-      message.append(pixel)
-    except IndexError:
-      yield ''.join(message)
-      message[2:] = [pixel]
-  yield ''.join(message)
+    pixels.append(pixel)
 
 def RunClient(options):
   """Discover the servers and start sending to the first one"""
@@ -36,15 +31,25 @@ def RunClient(options):
                             options.width, # Screen pixels wide, None for autodetect
                             options.height  # Screen pixels height, None for autodetect
                             )
-  message = NewMessage() #create a new message that buffers the output etc
 
   # loop the effect until we cancel by pressing ctrl+c / exit the program
   while True:
-    # create a new message and send it every time the buffer is full
+    pixels = [] # list to store the pixels we want to send
+
+    # add some pixels to the output with our functions
     # the width/height are read from the client's config
-    for packet in RandomFill(message, client.width, client.height):
-      # send the message we just filled with random pixels
-      client.SendPacket(packet)
+    RandomFill(pixels, client.width, client.height)
+
+    # send our pixels in packets including a message header and less than
+    # MAX_PIXELS pixels
+    for part in SplitList(MAX_PIXELS, pixels):
+      packet = InitMessage([]) + part
+      client.SendPacket(''.join(packet))
+
+def SplitList(max_size, lis):
+    """Splits a list into equal-sized chunks"""
+    for i in xrange(0, len(lis), max_size):
+        yield lis[i:i+max_size]
 
 if __name__ == '__main__':
   # if this script is called from the command line, and thus not imported

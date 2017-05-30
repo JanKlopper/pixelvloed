@@ -264,6 +264,10 @@ class PixelVloedClient(object):
 def NewMessage():
   """Creates a new message with the correct max size, rgb mode and version"""
   message = MaxSizeList(MAX_PIXELS+2)
+  InitMessage(message)
+  return message
+
+def InitMessage(message):
   message.append(SetRGBAMode(False))
   message.append(SetVersionBit())
   return message
