@@ -76,8 +76,8 @@ class Canvas(object):
       if a == 255:
         color = (r*256*256) + (g*256) + b
         if self.factor>1:
-          for w in xrange(0, self.factor):
-            for h in xrange(0, self.factor):
+          for w in range(0, self.factor):
+            for h in range(0, self.factor):
               self.pixels[(x*self.factor) + w][(y*self.factor) + h] = color
         else:
           self.pixels[x][y] = color
@@ -135,7 +135,7 @@ class Canvas(object):
                          self.limit)
         if self.debug:
           print('%d pixels received, protocol V %d' % (pixelcount, protocol))
-        for i in xrange(0, pixelcount):
+        for i in range(0, pixelcount):
           pixel = struct.unpack_from(
               packetformat,
               data,
@@ -154,10 +154,10 @@ class Canvas(object):
     """Lets send out our ip/port/resolution to any listening clients"""
     try:
       self.broadcastsocket.sendto(
-          '%s:%f %s:%d %d*%d' % (
+              str.encode('%s:%f %s:%d %d*%d' % (
               PROTOCOL_PREAMBLE, PROTOCOL_VERSION,
               self.udp_ip, self.udp_port,
-              self.width/self.factor, self.height/self.factor),
+              self.width/self.factor, self.height/self.factor)),
           ('<broadcast>', DISCOVER_PORT))
       if self.debug:
         print('sending discovery packet')
@@ -202,7 +202,7 @@ class PixelVloedClient(object):
         self.height = servers[0]['height']
       else:
         # lets list all found servers and allow the user to make a selection
-        for i in xrange(0, len(servers)):
+        for i in range(0, len(servers)):
           print('ID: %d' % i)
           print('%(ip)s:%(port)d, %(width)d*%(height)dpx\n' % servers[i])
         while not self.ipaddress:
